@@ -10,6 +10,7 @@ Api consists of these functions (initialCounter part of safe stack)
           setMap2 : Map<int,int> -> Async<bool> }       // works
 
 Server reports when invoking setMap
+
     info: Microsoft.AspNetCore.Hosting.Internal.WebHost[1]
           Request starting HTTP/1.1 POST http://localhost:8085/api/ICounterApi/setMap application/json; charset=UTF-8 13
     System.InvalidCastException: Cannot cast Newtonsoft.Json.Linq.JArray to Newtonsoft.Json.Linq.JToken.
@@ -18,7 +19,10 @@ Server reports when invoking setMap
        at Fable.Remoting.Server.DynamicRecord.tryCreateArgsFromJson(RecordFunctionInfo func, String inputJson, FSharpOption`1 logger)
 
 client reports "500 Internal Server Error"
-and payload = [[[[1,1],1]]]
+and payload =
+
+    [[[[1,1],1]]]
+
 and errors here...
 
     let send (req: HttpRequest) =
