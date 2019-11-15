@@ -27,8 +27,8 @@ module MyMapFails =
 /// to learn more, read the docs at https://zaid-ajaj.github.io/Fable.Remoting/src/basics.html
 type ICounterApi =
     { initialCounter : unit -> Async<Counter>
-      getMap : unit -> Async<MyMapFails>
+      getMap : unit -> Async<Map<int * int,int>>
       setMap : Map<int * int,int> -> Async<bool> // this one fails
-      getMap2 : unit -> Async<MyMapWorks>
-      setMap2 : MyMapWorks -> Async<bool> }
+      getMap2 : unit -> Async<Map<int,int>>
+      setMap2 : Map<int,int> -> Async<bool> }
 
