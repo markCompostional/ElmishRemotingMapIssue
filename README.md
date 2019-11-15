@@ -2,46 +2,46 @@
 
 Api consists of these functions (initialCounter part of safe stack)
 
-type ICounterApi =
-    { initialCounter : unit -> Async<Counter>
-      getMap : unit -> Async<Map<int * int,int>>    // works
-      setMap : Map<int * int,int> -> Async<bool>    // this one fails
-      getMap2 : unit -> Async<Map<int,int>>         // works
-      setMap2 : Map<int,int> -> Async<bool> }       // works
+    type ICounterApi =
+        { initialCounter : unit -> Async<Counter>
+          getMap : unit -> Async<Map<int * int,int>>    // works
+          setMap : Map<int * int,int> -> Async<bool>    // this one fails
+          getMap2 : unit -> Async<Map<int,int>>         // works
+          setMap2 : Map<int,int> -> Async<bool> }       // works
 
 Server reports when invoking setMap
-info: Microsoft.AspNetCore.Hosting.Internal.WebHost[1]
-      Request starting HTTP/1.1 POST http://localhost:8085/api/ICounterApi/setMap application/json; charset=UTF-8 13
-System.InvalidCastException: Cannot cast Newtonsoft.Json.Linq.JArray to Newtonsoft.Json.Linq.JToken.
-   at Newtonsoft.Json.Linq.Extensions.Convert[T,U](T token)
-   at Fable.Remoting.Server.DynamicRecord.createArgsFromJson$cont@132-1(RecordFunctionInfo func, FSharpOption`1 logger, Type input, JToken parsedJson, Unit unitVar)
-   at Fable.Remoting.Server.DynamicRecord.tryCreateArgsFromJson(RecordFunctionInfo func, String inputJson, FSharpOption`1 logger)
+    info: Microsoft.AspNetCore.Hosting.Internal.WebHost[1]
+          Request starting HTTP/1.1 POST http://localhost:8085/api/ICounterApi/setMap application/json; charset=UTF-8 13
+    System.InvalidCastException: Cannot cast Newtonsoft.Json.Linq.JArray to Newtonsoft.Json.Linq.JToken.
+       at Newtonsoft.Json.Linq.Extensions.Convert[T,U](T token)
+       at Fable.Remoting.Server.DynamicRecord.createArgsFromJson$cont@132-1(RecordFunctionInfo func, FSharpOption`1 logger, Type input, JToken parsedJson, Unit unitVar)
+       at Fable.Remoting.Server.DynamicRecord.tryCreateArgsFromJson(RecordFunctionInfo func, String inputJson, FSharpOption`1 logger)
 
 client reports "500 Internal Server Error"
 and payload = [[[[1,1],1]]]
 and errors here...
 
-let send (req: HttpRequest) =
-   Async.FromContinuations <| fun (resolve, _, _) -> 
-       let xhr = XMLHttpRequest.Create()
+    let send (req: HttpRequest) =
+       Async.FromContinuations <| fun (resolve, _, _) -> 
+           let xhr = XMLHttpRequest.Create()
             
-       match req.HttpMethod with 
-       | HttpMethod.GET -> xhr.``open``("GET", req.Url)
-       | HttpMethod.POST -> xhr.``open``("POST", req.Url)
+           match req.HttpMethod with 
+           | HttpMethod.GET -> xhr.``open``("GET", req.Url)
+           | HttpMethod.POST -> xhr.``open``("POST", req.Url)
                 
-       // set the headers, must be after opening the request
-       for (key, value) in req.Headers do 
-           xhr.setRequestHeader(key, value)
+           // set the headers, must be after opening the request
+           for (key, value) in req.Headers do 
+               xhr.setRequestHeader(key, value)
 
-       xhr.onreadystatechange <- fun _ ->
-           match xhr.readyState with
-           | ReadyState.Done -> resolve { StatusCode = unbox xhr.status; ResponseBody = xhr.responseText }
-           | otherwise -> ignore() 
+           xhr.onreadystatechange <- fun _ ->
+               match xhr.readyState with
+               | ReadyState.Done -> resolve { StatusCode = unbox xhr.status; ResponseBody = xhr.responseText }
+               | otherwise -> ignore() 
          
-       match req.RequestBody with 
-       | Empty -> xhr.send()
-       | Json content -> xhr.send(content) !!!!!!!!!!!!!!!!!!!!!!!!!!!!1!!!!!!! fails here
-       | Binary content -> xhr.send(content)
+           match req.RequestBody with 
+           | Empty -> xhr.send()
+           | Json content -> xhr.send(content) !!!!!!!!!!!!!!!!!!!!!!!!!!!!1!!!!!!! fails here
+           | Binary content -> xhr.send(content)
 
 # SAFE Template
 
