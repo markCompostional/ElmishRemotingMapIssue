@@ -158,9 +158,47 @@ let view (model : Model) (dispatch : Msg -> unit) =
               Content.content [ Content.Modifiers [ Modifier.TextAlignment (Screen.All, TextAlignment.Centered) ] ]
                   [ Heading.h3 [] [ str ("Success = " + (model.SetMapSuccess |> string)) ] ]
               Columns.columns [] [
+               // this will work and return
+               // {"[1,1]":1}
                   Column.column [] [ button "getMap: Map<(int,int),int>" (fun _ -> dispatch GetMap) ]
+               // this will fail with "500 Internal Server Error"
+               // and try to post as the payload
+               // [[[[1,1],1]]]
+                //let send (req: HttpRequest) =
+                //   Async.FromContinuations <| fun (resolve, _, _) -> 
+                //       let xhr = XMLHttpRequest.Create()
+            
+                //       match req.HttpMethod with 
+                //       | HttpMethod.GET -> xhr.``open``("GET", req.Url)
+                //       | HttpMethod.POST -> xhr.``open``("POST", req.Url)
+                
+                //       // set the headers, must be after opening the request
+                //       for (key, value) in req.Headers do 
+                //           xhr.setRequestHeader(key, value)
+
+                //       xhr.onreadystatechange <- fun _ ->
+                //           match xhr.readyState with
+                //           | ReadyState.Done -> resolve { StatusCode = unbox xhr.status; ResponseBody = xhr.responseText }
+                //           | otherwise -> ignore() 
+         
+                //       match req.RequestBody with 
+                //       | Empty -> xhr.send()
+                //       | Json content -> xhr.send(content) !!!!!!! fails here
+                //       | Binary content -> xhr.send(content)
+
+                // server reports
+//info: Microsoft.AspNetCore.Hosting.Internal.WebHost[1]
+//      Request starting HTTP/1.1 POST http://localhost:8085/api/ICounterApi/setMap application/json; charset=UTF-8 13
+//System.InvalidCastException: Cannot cast Newtonsoft.Json.Linq.JArray to Newtonsoft.Json.Linq.JToken.
+//   at Newtonsoft.Json.Linq.Extensions.Convert[T,U](T token)
+//   at Fable.Remoting.Server.DynamicRecord.createArgsFromJson$cont@132-1(RecordFunctionInfo func, FSharpOption`1 logger, Type input, JToken parsedJson, Unit unitVar)
+//   at Fable.Remoting.Server.DynamicRecord.tryCreateArgsFromJson(RecordFunctionInfo func, String inputJson, FSharpOption`1 logger)
                   Column.column [] [ button "setMap: Map<(int,int),int> -> bool" (fun _ -> dispatch (SetMapCommand (MyMapFails.value))) ]
+              // this will succeed and get in response 
+              // {"1":1}
                   Column.column [] [ button "getMap2: Map<int,int>" (fun _ -> dispatch GetMap2) ]
+              // this will succeed and post
+              // [[[1,1]]]
                   Column.column [] [ button "setMap2: Map<int,int> -> bool" (fun _ -> dispatch (SetMapCommand2 (MyMapWorks.value))) ]
               ]
             ]
