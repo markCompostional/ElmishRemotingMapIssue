@@ -28,7 +28,7 @@ module MyMapFails =
 type ICounterApi =
     { initialCounter : unit -> Async<Counter>
       getMap : unit -> Async<MyMapFails>
-      setMap : MyMapFails -> Async<bool>
+      setMap : Map<int * int,int> -> Async<bool> // this one fails
       getMap2 : unit -> Async<MyMapWorks>
       setMap2 : MyMapWorks -> Async<bool> }
 
